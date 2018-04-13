@@ -54,29 +54,27 @@ function readProducts() {
             if (err) throw err;
             console.log("All available products: \n")
             for (var i = 0; i < res.length; i++) {
-                import {
-                    table
-                } from 'products';
-                let data,
-                    output,
-                    options;
+                // const products = require('products');
+                // let data,
+                //     output,
+                //     options;
 
-                data = [
-                    [res[i].item_id, res[i].product_name, res[i].pric, res[i].stock_quantity],
+                // data = [
+                //     [res[i].item_id, res[i].product_name, res[i].pric, res[i].stock_quantity],
 
-                ];
+                // ];
 
-                options = {
-                    columns: {
-                        1: {
-                            width: 10
-                        }
-                    }
-                };
+                // options = {
+                //     columns: {
+                //         1: {
+                //             width: 10
+                //         }
+                //     }
+                // };
 
-                output = table(data, options);
+                // output = table(data, options);
 
-                console.log(output);
+                // console.log(output);
                 console.log("Item Number: " + res[i].item_id + " \nProduct: " + res[i].product_name + " \nPrice: " + res[i].price + " \nQuantity: " + res[i].stock_quantity + "\n");
             }
 

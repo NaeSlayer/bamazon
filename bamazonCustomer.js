@@ -12,7 +12,8 @@ var conn = mysql.createConnection({
 conn.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + conn.threadId + "\n");
-    user();
+    readProducts();
+    // user();
 })
 
 function user() {
@@ -59,10 +60,27 @@ function user() {
                 }
                 console.log("Your total is $" + totalPrice);
                 // conn.end();
-                doMore();
+
+
             }
         )
     })
+}
+
+function readProducts() {
+    var query = conn.query("SELECT * FROM products",
+        function (err, res) {
+            if (err) throw err;
+            console.log("All available products: \n")
+            for (var i = 0; i < res.length; i++) {
+
+                console.log("Item Number: " + res[i].item_id + " \nProduct: " + res[i].product_name + " \nPrice: " + res[i].price + " \nQuantity: " + res[i].stock_quantity + "\n");
+            }
+
+            // conn.end()
+            // doMore();
+            user();
+        })
 }
 
 function doMore() {
@@ -80,3 +98,5 @@ function doMore() {
         }
     })
 }
+
+module.exports = user;
