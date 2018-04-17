@@ -1,6 +1,9 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-var table = require("table");
+// var table = require("table");
+var {
+    table
+} = require('table');
 
 var conn = mysql.createConnection({
     host: "localhost",
@@ -48,50 +51,45 @@ function manager() {
     })
 }
 
+function makeTable(inventory) {
+    console.log(table(inventory));
+}
+
 function readProducts() {
     var query = conn.query("SELECT * FROM products",
         function (err, res) {
             if (err) throw err;
-            console.log("All available products: \n")
+            console.log("All available products: \n");
+
+            var data = [
+                ["Item Number", "Item", "Price", "Quantity Available"]
+            ];
             for (var i = 0; i < res.length; i++) {
-                // const products = require('products');
-                // let data,
-                //     output,
-                //     options;
+                data.push([res[i].item_id, res[i].product_name, res[i].price, res[i].stock_quantity]);
 
-                // data = [
-                //     [res[i].item_id, res[i].product_name, res[i].pric, res[i].stock_quantity],
-
-                // ];
-
-                // options = {
-                //     columns: {
-                //         1: {
-                //             width: 10
-                //         }
-                //     }
-                // };
-
-                // output = table(data, options);
-
-                // console.log(output);
-                console.log("Item Number: " + res[i].item_id + " \nProduct: " + res[i].product_name + " \nPrice: " + res[i].price + " \nQuantity: " + res[i].stock_quantity + "\n");
             }
-
-            // conn.end()
+            makeTable(data);
             doMore();
         })
 }
 
 function queryLowInventory() {
-    var query = conn.query("SELECT item_id, product_name, stock_quantity FROM products WHERE stock_quantity < 5",
+    var query = conn.query("SELECT item_id, product_name, stock_quantity FROM products WHERE stock_quantity < 10",
         function (err, res) {
             if (err) throw err;
             console.log("Products with less than 5 in stock\n");
+            var data = [
+                ["Item Number", "Item", "Quantity Available"]
+            ];
             for (var i = 0; i < res.length; i++) {
-                console.log("Item Number: " + res[i].item_id + " \nProduct: " + res[i].product_name + " \nQuantity: " + res[i].stock_quantity + "\n");
+                data.push([res[i].item_id, res[i].product_name, res[i].stock_quantity]);
+
             }
+            // for (var i = 0; i < res.length; i++) {
+            //     console.log("Item Number: " + res[i].item_id + " \nProduct: " + res[i].product_name + " \nQuantity: " + res[i].stock_quantity + "\n");
+            // }
             // conn.end();
+            makeTable(data);
             doMore();
 
         })

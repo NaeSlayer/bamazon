@@ -1,6 +1,8 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-var table = require("table");
+var {
+    table
+} = require('table');
 
 var conn = mysql.createConnection({
     host: "localhost",
@@ -36,9 +38,31 @@ function supervisor() {
     })
 }
 
-function viewSales() {
-    var query = conn.query("SELECT ")
+function makeTable(inventory) {
+    console.log(table(inventory));
 }
+
+
+function viewSales() {
+    var query = conn.query("SELECT department_name, product_sales FROM products GROUP BY department_name SUM (product_sales) AS department_sales", function (err, res) {
+        if (err) throw err;
+
+        var data = [
+            ["Department ID", "Department Name", "Overhead Costs", "Department Sales", "Total Profit"]
+        ];
+
+        for (var i = 0; i < res.length; i++) {
+            // department_sales[i] = sum product sales
+            // for each deparment name;
+            total_profit[i] = departmentSales - res[i].over_head_costs;
+
+            data.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, department_sales[i], total_profit[i]]);
+
+        }
+        makeTable(data);
+    })
+}
+
 // SELECT column - name AS alias - name
 // FROM table - name alias - name
 // WHERE condition

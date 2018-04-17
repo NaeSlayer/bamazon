@@ -1,5 +1,8 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
+var {
+    table
+} = require('table');
 
 var conn = mysql.createConnection({
     host: "localhost",
@@ -34,21 +37,25 @@ function user() {
             },
             function (err, res) {
                 var price = res[0].price;
-                var stockQuantity = res[0].stock_quantity;
-                var totalSales = res[0].product_sales;
+                var quantity = parseInt(response.quantityNeeded);
+                var stockQuantity = parseInt(res[0].stock_quantity);
+                var productSales = parseInt(res[0].product_sales);
+                // console.log(typeof totalSales);
                 // console.log(price + "  " + stockQuantity);
 
-                if (stockQuantity >= response.quantityNeeded) {
+                if (stockQuantity >= quantity) {
                     // fulfill the order, calculate total price, adjust quantity available
-                    var totalPrice = price * response.quantityNeeded;
-                    totalSales = totalSales + totalPrice;
-                    console.log("Total Sales: " + totalSales);
+                    var totalPrice = price * quantity;
+
+                    productSales = productSales + totalPrice;
+
+                    // console.log("Total Sales: " + totalSales);
                     // console.log("stock quantity: " + stockQuantity);
-                    stockQuantity -= response.quantityNeeded;
+                    stockQuantity -= quantity;
                     // console.log("new stock quantity: " + stockQuantity);
                     var query = conn.query("UPDATE products SET ? WHERE ?", [{
                             stock_quantity: stockQuantity,
-                            product_sales: totalSales
+                            product_sales: productSales
                         },
                         {
                             item_id: response.itemId
@@ -60,6 +67,7 @@ function user() {
                 }
                 console.log("Your total is $" + totalPrice);
                 // conn.end();
+                doMore();
 
 
             }
@@ -67,15 +75,23 @@ function user() {
     })
 }
 
+function makeTable(inventory) {
+    console.log(table(inventory));
+}
+
 function readProducts() {
     var query = conn.query("SELECT * FROM products",
         function (err, res) {
             if (err) throw err;
             console.log("All available products: \n")
+            var data = [
+                ["Item Number", "Item", "Price", "Quantity Available"]
+            ];
             for (var i = 0; i < res.length; i++) {
+                data.push([res[i].item_id, res[i].product_name, res[i].price, res[i].stock_quantity]);
 
-                console.log("Item Number: " + res[i].item_id + " \nProduct: " + res[i].product_name + " \nPrice: " + res[i].price + " \nQuantity: " + res[i].stock_quantity + "\n");
             }
+            makeTable(data);
 
             // conn.end()
             // doMore();
