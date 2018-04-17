@@ -9,4 +9,4 @@ Welcome to Bamazon!
 
  In the Supervisor mode you can view sales information by department and create new departments.
 
- 
+ Please see the screenshots to view functionality.
